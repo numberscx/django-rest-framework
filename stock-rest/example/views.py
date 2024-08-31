@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 def get_stock_view(reuqest):
     return Response(StockSerializer({"user":"acx","symbol":"as","price":123,"created_at":"2024-08-18 00:00:00"}).data);
 
-@api_view(['POST'])
+@api_view(['GET'])
 def query_simple_stock(request):
     logger.info(request)
     code = request.data.get('code')
