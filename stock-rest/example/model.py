@@ -16,6 +16,8 @@ class User(models.Model):
 
 class Stock(models.Model):
     stock_code = models.CharField(max_length=10, unique=True)
+    stock_name = models.CharField(max_length=32)
+
     career_id = models.CharField(max_length=10)
     attention_user_ids = models.TextField()
     holding_user_ids = models.TextField()
@@ -23,6 +25,9 @@ class Stock(models.Model):
 
     def __str__(self):
         return self.stock_code
+
+
+
 
 
 
@@ -60,5 +65,5 @@ class StockDatas(models.Model):
 
     def __str__(self):
         return self.stock_code
-    def queryNewStock(self, stock_code):
+
 
