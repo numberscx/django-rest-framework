@@ -10,7 +10,7 @@ def get_stock_view(reuqest):
 
 @api_view(['POST'])
 def query_simple_stock(request):
-
+    print(request)
     code = request.data.get('code')
     print(code)
     if(code):
