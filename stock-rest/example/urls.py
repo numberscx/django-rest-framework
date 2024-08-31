@@ -16,11 +16,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import get_stock_view,query_simple_stock
+from .views import query_simple_stock,query_my_stock,find_stock,modified_stock,init_stock
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('stocks/', get_stock_view, name='user-stocks'),
+    # 单股票的k线计算
     path('querysimple/', query_simple_stock, name='user-query-stocks'),
-
+    # 查询我的股票列表
+    path('querystocks/', query_my_stock, name='user-my-stocks'),
+    # 查询一个股票，若数据库没有，则查询相关信息并建立股票资料
+    path('findstock/', find_stock, name='find-stocks'),
+    # 查询一个股票，若数据库没有，则查询相关信息并建立股票资料
+    path('modifiedstock/', modified_stock, name='find-stocks'),
+    path('initstock/', init_stock, name='init-stock'),
 ]

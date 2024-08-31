@@ -1,18 +1,9 @@
 from pandas import DataFrame
+from .model import *
+from rest_framework import serializers
 
-from rest_framework import serializers, viewsets
-from .model import Stock
 
 
-class StockSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Stock
-        fields = ['user', 'symbol', 'price', 'created_at']
-
-class SimpleStockSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Stock
-        fields = ['stock_code']
 
 class PandasSerializer(serializers.Serializer):
     def to_internal_value(self, data):
@@ -20,3 +11,11 @@ class PandasSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         return instance.to_dict()
+
+class UserStockSerializer(serializers.Serializer):
+    # holding_stocks
+    # attention_stocks
+    # userId
+    class Meta:
+        model = UserStocks
+        fields = ['attention_stocks', 'holding_stocks']
