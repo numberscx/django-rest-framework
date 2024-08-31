@@ -15,7 +15,7 @@ class User(models.Model):
         return self.user_id
 
 class Stock(models.Model):
-    stock_code = models.CharField(max_length=10, unique=True)
+    stock_code = models.CharField(max_length=10, primary_key=True)
     stock_name = models.CharField(max_length=32)
 
     career_id = models.CharField(max_length=10)
@@ -25,10 +25,6 @@ class Stock(models.Model):
 
     def __str__(self):
         return self.stock_code
-
-
-
-
 
 
 class UserStocks(models.Model):
