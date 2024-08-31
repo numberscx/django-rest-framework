@@ -151,5 +151,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 # ]
 # 使用正则表达式匹配允许访问的 域名/IP
 CORS_ALLOWED_ORIGIN_REGEXES = [
+    "http://localhost:5173/",
+    "http://127.0.0.1:5173/",
     r"^https://\w+\.example\.com$",
 ]
