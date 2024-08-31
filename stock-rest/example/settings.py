@@ -155,3 +155,4 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
     "http://127.0.0.1:5173/",
     r"^https://\w+\.example\.com$",
 ]
+APPEND_SLASH=False
