@@ -21,6 +21,6 @@ from .views import get_stock_view,query_simple_stock
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('stocks/', get_stock_view, name='user-stocks'),
-    path('stocks/querysimple', query_simple_stock, name='user-query-stocks'),
+    path('querysimple/', query_simple_stock, name='user-query-stocks'),
 
 ]

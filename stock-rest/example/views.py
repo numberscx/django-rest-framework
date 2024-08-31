@@ -3,6 +3,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializer import StockSerializer
 from .utils import get_k_history,get_ma_frame,get_macd_frame
+import logging
+
+logger = logging.getLogger(__name__)
 
 @api_view(['GET'])
 def get_stock_view(reuqest):
@@ -10,9 +13,8 @@ def get_stock_view(reuqest):
 
 @api_view(['POST'])
 def query_simple_stock(request):
-    print(request)
+    logger.info(request)
     code = request.data.get('code')
-    print(code)
     if(code):
         kdataFrame = get_k_history(code)
         smaDataFrame = get_ma_frame(kdataFrame)
