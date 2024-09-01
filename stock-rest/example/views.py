@@ -8,6 +8,8 @@ from .utils import *
 import logging
 from .serializer import *
 import baostock as bs
+import time
+from datetime import datetime
 
 
 logger = logging.getLogger(__name__)
@@ -46,9 +48,42 @@ def modified_stock(request):
     action = request.data.get('action')
     type = request.data.get('type')
 
-    UserStocks.updateStock(userId,stock_id,action,type)
+    newlist = UserStocks.updateStock(userId,stock_id,action,type)
+    httpsu = HttpSuccess()
+    httpsu.msg = newlist
+    return Response(httpsu.to_representation())
 
-    return Response(HttpSuccess().to_representation())
+
+
+@api_view(['POST'])
+def query_chance(request):
+    userId = request.data.get('userId')
+    if userId!="scx":
+        return Response(HttpFailure().to_representation())
+    allstock = Stock.objects.all()
+
+    now = datetime.now()
+    now_str = now.strftime("%Y%m%d")
+
+    six_months_ago = now - datetime.timedelta(days=180)
+    start_str = six_months_ago.strftime("%Y%m%d")
+    f = open(now_str+"_"+userId+".txt", 'a') # 读取label.txt文件，没有则创建，‘a’表示再次写入时不覆盖之前的内容
+
+    for stock in allstock:
+        kdataFrame = get_k_history(stock.stock_code, beg=start_str, end=now_str)
+        smaDataFrame = get_ma_frame(kdataFrame)
+        buyOrSell = compute_buy_and_sell_real(smaDataFrame, userId,stock.stock_code)
+        if buyOrSell == 1:
+            f.write("time to buy "+stock.stock_code)
+            f.write('\n')
+            f.close()
+        elif buyOrSell == -1:
+            f.write("time to sell " + stock.stock_code)
+            f.write('\n')
+            f.close()
+        time.sleep(1)
+
+
 
 @api_view(['POST'])
 def init_stock(request):

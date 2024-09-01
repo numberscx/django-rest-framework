@@ -61,6 +61,14 @@ class UserStocks(models.Model):
 
     def updateStock(self, userId,stock_id, action, type):
         userstock = UserStocks.objects.filter(user_id=userId)
+        if userstock.exists():
+            print()
+        else:
+            userstock = UserStocks()
+            userstock.user_id = userId
+            userstock.holding_stocks=""
+            userstock.attention_stocks=""
+
         if action == "attention":
             stockText = userstock.get("attention_stocks");
         else:
@@ -72,9 +80,11 @@ class UserStocks(models.Model):
             stockList.append(stock_id)
         newStockText = ",".join(stockList)
         if action == "attention":
-            UserStocks.objects.filter(user_id=userId).update(attention_stocks=newStockText)
+            userstock.attention_stocks = newStockText
         else:
-            UserStocks.objects.filter(user_id=userId).update(holding_stocks=newStockText)
+            userstock.holding_stocks = newStockText
+        userstock.save()
+        return newStockText
 
 class StockDatas(models.Model):
     stock_code = models.CharField(max_length=10, unique=True)

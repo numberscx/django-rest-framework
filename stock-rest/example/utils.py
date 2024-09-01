@@ -5,7 +5,7 @@ import requests
 import time
 import pandas_ta as ta
 import numpy as np
-
+from .model import *
 
 def gen_eastmoney_code(rawcode: str) -> str:
     '''
@@ -161,10 +161,40 @@ def compute_buy_and_sell(kdataFrame: pd.DataFrame):
     mark_point_frame = pd.DataFrame(rows, columns=['buyAndSell'])
     return pd.concat([kdataFrame, mark_point_frame], axis=1)
 
+def compute_buy_and_sell_real(kdataFrame: pd.DataFrame,userId,stockCode):
+    close = kdataFrame['收盘']
+    open = kdataFrame['开盘']
+    ma5 = kdataFrame['ma5']
+    ma10 = kdataFrame['ma10']
+
+    userStock = UserStocks.objects.filter(user_id=userId).first()
+    print("find userstock",userStock)
+    userHolding = userStock.holding_stocks.split(",")
+    print("userHolding",userHolding)
+    for i in range(close.size):
+        if (i > 22):
+            # 若前五天的开盘、收盘均低于ma5，且当天上穿ma5，则标记为买点
+            if (judge_buy_real(close, open, ma5, ma10)):
+                return 1
+            elif (stockCode in userHolding and judge_sell_real(close, open, ma5, ma10)):
+                return -1
+
+def judge_buy_real(close, open, ma5, ma10):
+    # 连续5天的开盘或者收盘均低于10日均线，再涨15%就突破十日均线
+    if (ma10[-1] > max(close[-5:]) and ma10[-1] > max(open[-5:]) and close[-1]>open[-1] and (ma10[-1]-close[-1])/close[-1] <0.1):
+        return True
+    return False
+
+
+def judge_sell_real(close, open, ma5, ma10):
+    if(close[-1]<ma5):
+        return True
+    return False
+
 
 # 若前3天的收盘均低于ma10，且当天上穿ma10，并且已经涨了两天了
 def judge_buy(close, open, ma5, ma10, i):
-    if(ma10[i]>max(close[i-3:i]) and close[i]>ma10[i] and close[i-2]>=open[i-2] and close[i-1]>=open[i-1]):
+    if(ma10[i-1]>max(close[i-3:i]) and close[i]>ma10[i] and close[i-2]>=open[i-2] and close[i-1]>=open[i-1]):
         return True
     return False
 
