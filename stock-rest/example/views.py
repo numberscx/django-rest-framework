@@ -1,3 +1,4 @@
+from yaml import serialize
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -34,8 +35,8 @@ def query_my_stock(request):
 @api_view(['POST'])
 def find_stock(request):
     allstock = Stock.objects.all()
-
-    return Response(MySerializer.serialize(allstock))
+    serialize = MySerializer(allstock, many=True)
+    return Response(serialize.data)
 
 @api_view(['POST'])
 def modified_stock(request):
