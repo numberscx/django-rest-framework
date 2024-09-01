@@ -60,17 +60,17 @@ def init_stock(request):
         stock = Stock()
         stock.stock_code = (rs.get_row_data()[1]).split('.')[1]
         stock.stock_name = rs.get_row_data()[2]
-        stock.save(force_update=True)
+        stock.save()
     while (zs.error_code == '0') & zs.next():
         # 获取一条记录，将记录合并在一起
         stock = Stock()
         stock.stock_code = (zs.get_row_data()[1]).split('.')[1]
         stock.stock_name = zs.get_row_data()[2]
-        stock.save(force_update=True)
+        stock.save()
     while (zz.error_code == '0') & zz.next():
         # 获取一条记录，将记录合并在一起
         stock = Stock()
         stock.stock_code = (zz.get_row_data()[1]).split('.')[1]
         stock.stock_name = zz.get_row_data()[2]
-        stock.save(force_update=True)
+        stock.save()
 

@@ -26,6 +26,29 @@ class Stock(models.Model):
     def __str__(self):
         return self.stock_code
 
+    def check_data(self, item_user_id):
+        order_exists = TestUser.objects.filter(user_id=item_user_id, )
+        if order_exists.exists():
+            print('user  存在' * 10)
+            print("user  不用插入数据" * 10)
+            return order_exists[0]
+        else:
+            return False
+
+    def save(self):
+        temp_user_id = self.stock_code
+        order_exists = Stock.objects.filter(stock_code=temp_user_id)
+        if order_exists.exists():
+            print('股票已经存在，现在更新数据，更新的数据id：', order_exists.last().id)
+
+            '''此处注意，这里默认更新的是最后一条数据'''
+            self.stock_code = order_exists.last().stock_code
+        else:
+            print('直接增加数据')
+            pass
+        super().save()
+
+
 
 class UserStocks(models.Model):
     user_id = models.CharField(max_length=32, primary_key=True)
