@@ -35,8 +35,8 @@ def query_my_stock(request):
 def find_stock(request):
     allstock = Stock.objects.all()
     print("allstock:")
-    serialize = MySerializer(allstock, many=True)
-    return Response(serialize.data)
+    serializers = StockSerializer(allstock, many=True)
+    return Response(serializers.data)
 
 @api_view(['POST'])
 def modified_stock(request):
