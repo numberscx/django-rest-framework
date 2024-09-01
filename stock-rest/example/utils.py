@@ -20,7 +20,7 @@ def gen_eastmoney_code(rawcode: str) -> str:
     if rawcode[0] != '6':
         return f'0.{rawcode}'
 
-def get_k_history(code: str, beg: str = '20200101', end = '10000204', klt: int = 101,
+def get_k_history(code: str, beg: str = '20230101', end = '10000204', klt: int = 101,
                   fqt: int = 1) -> pd.DataFrame:
     '''
     功能获取k线数据
