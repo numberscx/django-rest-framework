@@ -149,7 +149,7 @@ def compute_buy_and_sell(kdataFrame: pd.DataFrame):
     markPoint = np.zeros((close.size,))
 
     for i in range(close.size):
-        if (i > 25):
+        if (i > 22):
             # 若前五天的开盘、收盘均低于ma5，且当天上穿ma5，则标记为买点
             if (judge_buy(close, open, ma5, ma10, i)):
                 markPoint[i] = 1
@@ -162,14 +162,14 @@ def compute_buy_and_sell(kdataFrame: pd.DataFrame):
     return pd.concat([kdataFrame, mark_point_frame], axis=1)
 
 
-# 若前五天的开盘、收盘均低于ma5，且当天上穿ma5，则标记为买点
+# 若前3天的收盘均低于ma5，且当天上穿ma5，则标记为买点
 def judge_buy(close, open, ma5, ma10, i):
-    if(ma5[i]>max(close[i-5:i]) and ma5[i]>max(open[i-5:i]) and close[i] > open[i] and close[i]>ma5[i]):
+    if(ma5[i]>max(close[i-3:i]) and close[i] > open[i] and close[i]>ma5[i]):
         return True
     return False
 
 # 若前3天收盘均高于ma5，且当天下穿ma5，则标记为卖点
 def judge_sell(close, open, ma5, ma10, i):
-    if(ma5[i]<max(close[i-3:i]) and close[i] < open[i] and close[i]<ma5[i]):
+    if(ma5[i]<min(close[i-3:i]) and close[i] < open[i] and close[i]<ma5[i]):
         return True
     return False
