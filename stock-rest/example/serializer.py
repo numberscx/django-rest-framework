@@ -19,3 +19,11 @@ class UserStockSerializer(serializers.Serializer):
     class Meta:
         model = UserStocks
         fields = ['attention_stocks', 'holding_stocks']
+
+class StockSerializer(serializers.Serializer):
+    # holding_stocks
+    # attention_stocks
+    # userId
+    class Meta:
+        model = Stock
+        fields = ['stock_name', 'stock_code']

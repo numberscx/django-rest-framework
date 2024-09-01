@@ -30,8 +30,8 @@ def query_my_stock(request):
 
 @api_view(['POST'])
 def find_stock(request):
-    stock_id = request.data.get('stockId')
-
+    allstock = Stock.objects.all()
+    return Response(allstock.to_dict())
 
 @api_view(['POST'])
 def modified_stock(request):

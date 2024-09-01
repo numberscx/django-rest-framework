@@ -26,15 +26,6 @@ class Stock(models.Model):
     def __str__(self):
         return self.stock_code
 
-    def check_data(self, item_user_id):
-        order_exists = TestUser.objects.filter(user_id=item_user_id, )
-        if order_exists.exists():
-            print('user  存在' * 10)
-            print("user  不用插入数据" * 10)
-            return order_exists[0]
-        else:
-            return False
-
     def save(self):
         temp_user_id = self.stock_code
         order_exists = Stock.objects.filter(stock_code=temp_user_id)
