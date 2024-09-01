@@ -2,8 +2,10 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .model import *
-from .utils import get_k_history,get_ma_frame,get_macd_frame
+from .innerModel import *
+from .utils import *
 import logging
+from .serializer import *
 import pandas as pd
 import baostock as bs
 
@@ -20,18 +22,20 @@ def query_simple_stock(request):
         macdDataFrame = get_macd_frame(smaDataFrame)
         return Response(macdDataFrame.to_dict())
     else:
-        return Response({'error': '缺少code参数'})
+        return Response(HttpFailure().serialize())
 
 @api_view(['POST'])
 def query_my_stock(request):
     userId = request.data.get('userId')
     userstockinfo = UserStocks.objects.filter(userId=userId)
-    return Response(userstockinfo.to_dict())
+
+    return Response(get_single_json_response(userstockinfo))
 
 @api_view(['POST'])
 def find_stock(request):
     allstock = Stock.objects.all()
-    return Response(allstock.to_dict())
+
+    return Response(get_list_json_response(allstock))
 
 @api_view(['POST'])
 def modified_stock(request):
@@ -40,6 +44,7 @@ def modified_stock(request):
     action = request.data.get('action')
     type = request.data.get('type')
     UserStocks.updateStock(userId,stock_id,action,type)
+
     return Response({"success":"true"})
 
 @api_view(['POST'])
@@ -73,4 +78,5 @@ def init_stock(request):
         stock.stock_code = (zz.get_row_data()[1]).split('.')[1]
         stock.stock_name = zz.get_row_data()[2]
         stock.save()
+    return Response(HttpSuccess.serialize())
 

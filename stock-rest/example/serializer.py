@@ -24,6 +24,8 @@ class StockSerializer(serializers.Serializer):
     # holding_stocks
     # attention_stocks
     # userId
-    class Meta:
-        model = Stock
-        fields = ['stock_name', 'stock_code']
+    def to_representation(self,stock):
+        return {
+            'stock_name': stock.stock_name,
+            'stock_code': stock.stock_code
+        }

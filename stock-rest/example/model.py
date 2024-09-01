@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import JSONField
 
 # Create your models here.
 class User(models.Model):
@@ -10,6 +11,10 @@ class User(models.Model):
     credit_level = models.CharField(max_length=32)
     extra_info = models.CharField(max_length=256)
     operation_info = models.CharField(max_length=1024)
+    data = JSONField(default=dict)
+
+    def serialize(self):
+        return self.data
 
     def __str__(self):
         return self.user_id
@@ -22,6 +27,10 @@ class Stock(models.Model):
     attention_user_ids = models.TextField()
     holding_user_ids = models.TextField()
     quality = models.CharField(max_length=3)
+    data = JSONField(default=dict)
+
+    def serialize(self):
+        return self.data
 
     def __str__(self):
         return self.stock_code
@@ -43,6 +52,10 @@ class UserStocks(models.Model):
     user_id = models.CharField(max_length=32, primary_key=True)
     attention_stocks = models.TextField()
     holding_stocks = models.TextField()
+    data = JSONField(default=dict)
+
+    def serialize(self):
+        return self.data
 
     def __str__(self):
         return self.user_id
@@ -70,7 +83,10 @@ class StockDatas(models.Model):
     history_k_info = models.TextField()
     basic_info = models.TextField()
     gmt_modified = models.DateTimeField()
+    data = JSONField(default=dict)
 
+    def serialize(self):
+        return self.data
     def __str__(self):
         return self.stock_code
 

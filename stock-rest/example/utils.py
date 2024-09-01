@@ -127,4 +127,11 @@ def get_macd_frame(kdataFrame: pd.DataFrame):
     macd.fillna(0, inplace=True)
     return pd.concat([kdataFrame, macd], axis=1)
 
+def get_single_json_response(data):
+    return data.serialize()
 
+
+def get_list_json_response(data):
+    context = super().get_serializer_context()
+    context['data'] = [item.serialize() for item in data]
+    return context
