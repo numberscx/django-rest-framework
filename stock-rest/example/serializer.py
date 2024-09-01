@@ -30,6 +30,7 @@ class StockSerializer(serializers.Serializer):
 
 class MySerializer(serializers.Serializer):
     def serialize(self, instance, format=None, fields=None, many=False):
+        print(instance)
         data = super().serialize(instance, format, fields, many)
         data['my_field'] = 'my_value'
         return data
