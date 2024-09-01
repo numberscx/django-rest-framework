@@ -39,12 +39,10 @@ class Stock(models.Model):
         temp_user_id = self.stock_code
         order_exists = Stock.objects.filter(stock_code=temp_user_id)
         if order_exists.exists():
-            print('股票已经存在，现在更新数据，更新的数据id：', order_exists.last().id)
-
+            print('股票已经存在，现在更新数据')
             '''此处注意，这里默认更新的是最后一条数据'''
             self.stock_code = order_exists.last().stock_code
         else:
-            print('直接增加数据')
             pass
         super().save()
 
