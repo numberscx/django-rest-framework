@@ -22,20 +22,20 @@ def query_simple_stock(request):
         macdDataFrame = get_macd_frame(smaDataFrame)
         return Response(macdDataFrame.to_dict())
     else:
-        return Response(HttpFailure().serialize())
+        return Response(MySerializer.serialize(HttpFailure()))
 
 @api_view(['POST'])
 def query_my_stock(request):
     userId = request.data.get('userId')
     userstockinfo = UserStocks.objects.filter(userId=userId)
 
-    return Response(get_single_json_response(userstockinfo))
+    return Response(MySerializer.serialize(userstockinfo))
 
 @api_view(['POST'])
 def find_stock(request):
     allstock = Stock.objects.all()
 
-    return Response(get_list_json_response(allstock))
+    return Response(MySerializer.serialize(allstock))
 
 @api_view(['POST'])
 def modified_stock(request):
@@ -45,7 +45,7 @@ def modified_stock(request):
     type = request.data.get('type')
     UserStocks.updateStock(userId,stock_id,action,type)
 
-    return Response({"success":"true"})
+    return Response(MySerializer.serialize(HttpSuccess()))
 
 @api_view(['POST'])
 def init_stock(request):
@@ -78,5 +78,5 @@ def init_stock(request):
         stock.stock_code = (zz.get_row_data()[1]).split('.')[1]
         stock.stock_name = zz.get_row_data()[2]
         stock.save()
-    return Response(HttpSuccess.serialize())
+    return Response(MySerializer.serialize(HttpSuccess()))
 

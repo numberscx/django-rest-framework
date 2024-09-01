@@ -3,8 +3,6 @@ from .model import *
 from rest_framework import serializers
 
 
-
-
 class PandasSerializer(serializers.Serializer):
     def to_internal_value(self, data):
         return DataFrame(data)
@@ -29,3 +27,9 @@ class StockSerializer(serializers.Serializer):
             'stock_name': stock.stock_name,
             'stock_code': stock.stock_code
         }
+
+class MySerializer(serializers.Serializer):
+    def serialize(self, instance, format=None, fields=None, many=False):
+        data = super().serialize(instance, format, fields, many)
+        data['my_field'] = 'my_value'
+        return data

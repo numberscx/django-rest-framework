@@ -72,6 +72,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'example.wsgi.application'
+JSON_SERIALIZER_CLASS = 'rest_framework.serializers.JSONSerializer'
 
 
 # Database
