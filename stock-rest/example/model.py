@@ -11,8 +11,11 @@ class User(models.Model):
     extra_info = models.CharField(max_length=256)
     operation_info = models.CharField(max_length=1024)
 
-    # def serialize(self):
-    #     return self.data
+    def __json__(self):
+        return {
+            'user': self.name,
+            'age': self.age
+        }
 
     def __str__(self):
         return self.user_id

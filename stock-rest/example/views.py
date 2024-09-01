@@ -7,7 +7,6 @@ from .innerModel import *
 from .utils import *
 import logging
 from .serializer import *
-import pandas as pd
 import baostock as bs
 
 
@@ -29,14 +28,13 @@ def query_simple_stock(request):
 def query_my_stock(request):
     userId = request.data.get('userId')
     userstockinfo = UserStocks.objects.filter(userId=userId)
-
-    return Response(MySerializer.serialize(userstockinfo))
+    serializers = StockSerializer(userstockinfo, many=True)
+    return Response(serializers.data)
 
 @api_view(['POST'])
 def find_stock(request):
     allstock = Stock.objects.all()
     print("allstock:")
-    print(allstock)
     serialize = MySerializer(allstock, many=True)
     return Response(serialize.data)
 
@@ -46,6 +44,7 @@ def modified_stock(request):
     stock_id = request.data.get('stockId')
     action = request.data.get('action')
     type = request.data.get('type')
+
     UserStocks.updateStock(userId,stock_id,action,type)
 
     return Response(MySerializer.serialize(HttpSuccess()))
