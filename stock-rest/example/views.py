@@ -20,9 +20,10 @@ def query_simple_stock(request):
         kdataFrame = get_k_history(code)
         smaDataFrame = get_ma_frame(kdataFrame)
         macdDataFrame = get_macd_frame(smaDataFrame)
-        return Response(macdDataFrame.to_dict())
+        computeBuySellDataFrame = compute_buy_and_sell(macdDataFrame)
+        return Response(computeBuySellDataFrame.to_dict())
     else:
-        return Response(MySerializer.serialize(HttpFailure()))
+        return Response(HttpFailure().to_representation())
 
 @api_view(['POST'])
 def query_my_stock(request):
@@ -47,7 +48,7 @@ def modified_stock(request):
 
     UserStocks.updateStock(userId,stock_id,action,type)
 
-    return Response(MySerializer.serialize(HttpSuccess()))
+    return Response(HttpSuccess().to_representation())
 
 @api_view(['POST'])
 def init_stock(request):
@@ -80,5 +81,5 @@ def init_stock(request):
         stock.stock_code = (zz.get_row_data()[1]).split('.')[1]
         stock.stock_name = zz.get_row_data()[2]
         stock.save()
-    return Response(MySerializer.serialize(HttpSuccess()))
+    return Response(HttpSuccess().to_representation())
 

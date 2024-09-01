@@ -1,3 +1,4 @@
+from operator import truediv
 from urllib.parse import urlencode
 import pandas as pd
 import requests
@@ -93,6 +94,8 @@ def get_k_history(code: str, beg: str = '20200101', end = '10000204', klt: int =
         rows.append(kline)
     df = pd.DataFrame(rows, columns=columns)
     df['收盘'] = df['收盘'].astype(float)
+    df['开盘'] = df['开盘'].astype(float)
+
     return df
 
 def get_ma_frame(kdataFrame : pd.DataFrame):
@@ -135,3 +138,38 @@ def get_list_json_response(data):
     context = super().get_serializer_context()
     context['data'] = [item.serialize() for item in data]
     return context
+
+
+def compute_buy_and_sell(kdataFrame: pd.DataFrame):
+    close = kdataFrame['收盘']
+    open = kdataFrame['开盘']
+    ma5 = kdataFrame['ma5']
+    ma10 = kdataFrame['ma10']
+
+    markPoint = np.zeros((close.size,))
+
+    for i in range(close.size):
+        if (i > 25):
+            # 若前五天的开盘、收盘均低于ma5，且当天上穿ma5，则标记为买点
+            if (judge_buy(close, open, ma5, ma10, i)):
+                markPoint[i] = 1
+            elif (judge_sell(close, open, ma5, ma10, i)):
+                markPoint[i] = -1
+    rows = []
+    for i in range(0, markPoint.size):
+        rows.append([markPoint[i]])
+    mark_point_frame = pd.DataFrame(rows, columns=['buyAndSell'])
+    return pd.concat([kdataFrame, mark_point_frame], axis=1)
+
+
+# 若前五天的开盘、收盘均低于ma5，且当天上穿ma5，则标记为买点
+def judge_buy(close, open, ma5, ma10, i):
+    if(ma5[i]>max(close[i-5:i]) and ma5[i]>max(open[i-5:i]) and close[i] > open[i] and close[i]>ma5[i]):
+        return True
+    return False
+
+# 若前3天收盘均高于ma5，且当天下穿ma5，则标记为卖点
+def judge_sell(close, open, ma5, ma10, i):
+    if(ma5[i]<max(close[i-3:i]) and close[i] < open[i] and close[i]<ma5[i]):
+        return True
+    return False
