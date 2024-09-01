@@ -153,7 +153,7 @@ def compute_buy_and_sell(kdataFrame: pd.DataFrame):
             # 若前五天的开盘、收盘均低于ma5，且当天上穿ma5，则标记为买点
             if (judge_buy(close, open, ma5, ma10, i)):
                 markPoint[i] = 1
-            elif (judge_sell(close, open, ma5, ma10, i)):
+            elif (judge_sell(close, open, ma5, ma10, i, markPoint)):
                 markPoint[i] = -1
     rows = []
     for i in range(0, markPoint.size):
@@ -162,14 +162,21 @@ def compute_buy_and_sell(kdataFrame: pd.DataFrame):
     return pd.concat([kdataFrame, mark_point_frame], axis=1)
 
 
-# 若前3天的收盘均低于ma5，且当天上穿ma5，则标记为买点
+# 若前3天的收盘均低于ma10，且当天上穿ma10，并且已经涨了两天了
 def judge_buy(close, open, ma5, ma10, i):
-    if(ma5[i]>max(close[i-3:i]) and close[i] > open[i] and close[i]>ma5[i]):
+    if(ma10[i]>max(close[i-3:i]) and close[i]>ma10[i] and close[i-2]>=open[i-2] and close[i-1]>=open[i-1]):
         return True
     return False
 
-# 若前3天收盘均高于ma5，且当天下穿ma5，则标记为卖点
-def judge_sell(close, open, ma5, ma10, i):
+# 若前3天收盘均高于ma5，且当天下穿ma5，且上一个点为买点
+def judge_sell(close, open, ma5, ma10, i, markPoint):
     if(ma5[i]<min(close[i-3:i]) and close[i] < open[i] and close[i]<ma5[i]):
-        return True
+        hasBuy = False
+        for j in range(1,i):
+            if(markPoint[i-j] == -1):
+                break;
+            elif(markPoint[i-j] == 1):
+                hasBuy = True
+                break
+        return hasBuy
     return False
