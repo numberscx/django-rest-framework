@@ -179,7 +179,7 @@ LOGGING = {
         },
     },
     "root": {
-        "handlers": ["console"],
-        "level": "WARNING",
+        "handlers": ["file"],
+        "level": "info",
     },
 }
