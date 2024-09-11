@@ -6,6 +6,9 @@ import time
 import pandas_ta as ta
 import numpy as np
 from .model import *
+import logging
+logger = logging.getLogger("util")
+
 
 def gen_eastmoney_code(rawcode: str) -> str:
     '''
@@ -211,8 +214,50 @@ def judge_sell(close, open, ma5, ma10, i, markPoint):
         return hasBuy
     return False
 
+# 每日根据收盘计算macd处于跌势末尾，jdk快线上穿慢线
+def computeDailyStock():
+    allstock = Stock.objects.all()
 
-import requests
+    for stockCode in allstock:
+        kdataFrame = get_k_history(stockCode)
+        smaDataFrame = get_ma_frame(kdataFrame)
+        macdDataFrame = get_macd_frame(smaDataFrame)
+
+        macdArray = macdDataFrame['MACD_12_26_9']
+        kArray = macdDataFrame['收盘']
+        k,d,j = calculate_kdj(kArray)
+        logger.info("kdj",k,d,j)
+
+
+def calculate_kdj(data):
+    n = len(data)
+    k_values, d_values, j_values = [], [], []
+
+    for i in range(n):
+        if i < 8:
+            k_values.append(0)
+            d_values.append(0)
+            j_values.append(0)
+            continue
+
+        lowest_low = min(data[i - 8: i + 1])
+        highest_high = max(data[i - 8: i + 1])
+
+        rsv = (data[i] - lowest_low) / (highest_high - lowest_low) * 100
+
+        if i == 8:
+            k = rsv
+            d = rsv
+        else:
+            k = (2 / 3) * k_values[i - 8] + (1 / 3) * rsv
+            d = (2 / 3) * d_values[i - 8] + (1 / 3) * k
+
+        j = 3 * k - 2 * d
+        k_values.append(k)
+        d_values.append(d)
+        j_values.append(j)
+
+    return k_values, d_values, j_values
 
 def send_wechat(msg):
     token = 'de25e20f7de54968b6edd2243ec1441a'#前边复制到那个token
