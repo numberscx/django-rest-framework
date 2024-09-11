@@ -8,8 +8,9 @@ def job_function(**kwargs):
 
 
 scheduler = BackgroundScheduler()
-
+print("定时任务开始")
 scheduler.add_job(job_function, 'cron', **{"start_date": "2024-09-12 10:38:00", "end_date": "2029-06-18 10:38:20", "second": "*/2"})
+print("定时任务注册开始")
 
 
 scheduler.start()
