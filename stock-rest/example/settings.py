@@ -175,13 +175,13 @@ LOGGING = {
     'disable_existing_loggers': False,
     'handlers': {
         'file': {
-            'level': 'DEBUG',
+            'level': 'info',
             'class': 'logging.FileHandler',
             'filename': 'info.log',
         },
     },
     'root': {
         'handlers': ['file'],
-        'level': 'DEBUG',
+        'level': 'info',
     },
 }
