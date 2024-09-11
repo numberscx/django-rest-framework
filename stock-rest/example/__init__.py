@@ -39,3 +39,5 @@
 # if __name__ == '__main__':
 #     msg = 'Life is short I use python'
 #     send_wechat(msg)
+from .schedule import __initSchedule__
+__initSchedule__()
