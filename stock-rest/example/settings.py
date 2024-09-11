@@ -41,9 +41,16 @@ INSTALLED_APPS = [
     'rest_framework',
     'example',
     'django_crontab',
-    'django_apscheduler'
+    'django_apscheduler',
+    'celery'
 
 ]
+# settings.py
+# 定时任务
+from apscheduler.schedulers.background import BackgroundScheduler
+
+scheduler = BackgroundScheduler()
+scheduler.start()
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

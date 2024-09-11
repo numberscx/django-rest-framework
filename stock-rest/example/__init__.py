@@ -24,3 +24,18 @@
 #
 # # 登出系统
 # bs.logout()
+# import requests
+#
+# def send_wechat(msg):
+#     token = 'de25e20f7de54968b6edd2243ec1441a'#前边复制到那个token
+#     title = 'title1'
+#     content = msg
+#     template = 'html'
+#     url = f"https://www.pushplus.plus/send?token={token}&title={title}&content={content}&template={template}"
+#     print(url)
+#     r = requests.get(url=url)
+#     print(r.text)
+#
+# if __name__ == '__main__':
+#     msg = 'Life is short I use python'
+#     send_wechat(msg)
