@@ -171,15 +171,17 @@ APPEND_SLASH=False
 import os
 
 LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'info.log',
         },
     },
-    "root": {
-        "handlers": ["file"],
-        "level": "info",
+    'root': {
+        'handlers': ['file'],
+        'level': 'DEBUG',
     },
 }
