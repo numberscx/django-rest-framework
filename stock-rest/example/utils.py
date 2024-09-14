@@ -261,7 +261,8 @@ def macdStrategy(macdDataFrame: pd.DataFrame):
     macdslow = macdDataFrame['macds']
     macdfast = macdDataFrame['macdf']
     macd = macdDataFrame['macd']
-
+    print("print macd")
+    print(macd)
     if(macd[-1]>0):
         # 判断是否快线上穿了慢线(五天内差值相乘小于等于0)，多方信号
         if(macd[-5]*macd[-4]<=0 or macd[-4]*macd[-3]<=0 or macd[-3]*macd[-2]<=0 or macd[-2]*macd[-1]<=0):
