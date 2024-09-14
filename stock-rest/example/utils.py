@@ -246,11 +246,12 @@ def computeDailyStock():
         kArray = macdDataFrame['收盘']
         k,d,j = calculate_kdj(kArray)
         msg,needAdd = macdStrategy(macdDataFrame)
+        expandMsg = '股票代码：'+stockCode.__str__() + '，股票名：' + stockCode['stock_name'] + '，交易建议：' +msg +'|'
         if(needAdd):
-            return_result = return_result + msg+'\n'
+            return_result = return_result + expandMsg
         sleep(1)
-        print(stockCode.__str__() + msg)
-        logger.debug(stockCode.__str__() + msg)
+        print(expandMsg)
+        logger.debug(expandMsg)
     return return_result
 
 
@@ -267,11 +268,11 @@ def macdStrategy(macdDataFrame: pd.DataFrame):
         # 判断是否快线上穿了慢线(五天内差值相乘小于等于0)，多方信号
             maxOne,maxSeri = findSpecialPoint(macd,-1)
             if(macdfast[maxSeri]<maxOne):
-                return "macdBuy",True
+                return "涨价区间，可考虑买入点",True
         else:
             maxOne,maxSeri = findSpecialPoint(macd,1)
             if(macdfast[maxSeri]>maxOne):
-                return "macdSell",True
+                return "降价区间，可考虑止盈止损",True
 
     return "ignore",False
 
