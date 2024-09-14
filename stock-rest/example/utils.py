@@ -164,7 +164,7 @@ def compute_buy_and_sell(macdDataFrame: pd.DataFrame):
     maxlen = len(macd)
 
     markPoint = np.zeros((maxlen,))
-    for i in range(maxlen):
+    for i in range(maxlen-1):
         if i<30:
             continue
         if macd[i]*macd[i+1]<0:
