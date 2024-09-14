@@ -78,6 +78,8 @@ def query_chance(request):
 
     for stock in allstock:
         kdataFrame = get_k_history(stock.stock_code, beg=start_str, end=now_str)
+        if not kdataFrame:
+            continue
         smaDataFrame = get_ma_frame(kdataFrame)
         buyOrSell = compute_buy_and_sell_real(smaDataFrame, userId,stock.stock_code)
         if buyOrSell == 1:

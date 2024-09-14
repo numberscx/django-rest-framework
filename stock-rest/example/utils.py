@@ -1,4 +1,5 @@
 from operator import truediv
+from time import sleep
 from urllib.parse import urlencode
 import pandas as pd
 import requests
@@ -91,6 +92,8 @@ def get_k_history(code: str, beg: str = '20230101', end = '10000204', klt: int =
     # code = data['code']
     # 股票名称
     # name = data['name']
+    if not data:
+        return None
     klines = data['klines']
     rows = []
     for _kline in klines:
@@ -103,6 +106,8 @@ def get_k_history(code: str, beg: str = '20230101', end = '10000204', klt: int =
     return df
 
 def get_ma_frame(kdataFrame : pd.DataFrame):
+    if not kdataFrame:
+        return None
     kdata = kdataFrame['收盘']
     print(kdata.size)
     ma_5 = ta.sma(kdata, 5)
@@ -234,6 +239,8 @@ def computeDailyStock():
     for stockCode in allstock:
         logger.debug("computeDailyStock stock_code = "+stockCode.__str__())
         kdataFrame = get_k_history(stockCode.__str__())
+        if not kdataFrame:
+            continue
         smaDataFrame = get_ma_frame(kdataFrame)
         macdDataFrame = get_macd_frame(smaDataFrame)
 
@@ -242,6 +249,9 @@ def computeDailyStock():
         msg,needAdd = macdStrategy(macdDataFrame)
         if(needAdd):
             return_result = return_result + msg+'\n'
+        sleep(1)
+        print(msg)
+        logger.debug(msg)
     return return_result
 
 
