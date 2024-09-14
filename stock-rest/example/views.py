@@ -53,6 +53,13 @@ def modified_stock(request):
     httpsu.msg = newlist
     return Response(httpsu.to_representation())
 
+@api_view(['GET'])
+def queryDailyStock(request):
+    msg = computeDailyStock()
+    send_wechat(msg)
+    logger.debug("dailyStockCompute " + msg)
+    return Response({'success': True,
+            'msg': msg})
 
 
 @api_view(['POST'])

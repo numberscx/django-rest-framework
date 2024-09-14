@@ -7,6 +7,7 @@ import pandas_ta as ta
 import numpy as np
 from .model import *
 import logging
+from .basicTa import macdScx
 logger = logging.getLogger("util")
 
 
@@ -126,12 +127,19 @@ def get_ma_frame(kdataFrame : pd.DataFrame):
 
 def get_macd_frame(kdataFrame: pd.DataFrame):
     kdata = kdataFrame['收盘']
-    macd = ta.macd(kdata)
+    fastma,slowma,macd = macdScx(kdata)
     macd = macd.replace(np.NaN, 0)
-
+    slowma = slowma.replace(np.NaN, 0)
+    fastma = fastma.replace(np.NaN, 0)
 
     macd.fillna(0, inplace=True)
-    return pd.concat([kdataFrame, macd], axis=1)
+    slowma = slowma.replace(np.NaN, 0)
+    fastma = fastma.replace(np.NaN, 0)
+
+    macdPd = np.array([slowma, fastma, macd])
+    df = pd.DataFrame(macdPd, columns=['macds', 'macdf', 'macd'])
+
+    return pd.concat([kdataFrame, df], axis=1)
 
 def get_single_json_response(data):
     return data.serialize()
@@ -217,17 +225,57 @@ def judge_sell(close, open, ma5, ma10, i, markPoint):
 # 每日根据收盘计算macd处于跌势末尾，jdk快线上穿慢线
 def computeDailyStock():
     allstock = Stock.objects.all()
+    return_result = ""
 
     for stockCode in allstock:
+        logger.debug("computeDailyStock stock_code = "+stockCode)
         kdataFrame = get_k_history(stockCode)
         smaDataFrame = get_ma_frame(kdataFrame)
         macdDataFrame = get_macd_frame(smaDataFrame)
 
-        macdArray = macdDataFrame['MACD_12_26_9']
         kArray = macdDataFrame['收盘']
         k,d,j = calculate_kdj(kArray)
-        logger.info("kdj",k,d,j)
+        msg,needAdd = macdStrategy(macdDataFrame)
+        if(needAdd):
+            return_result = return_result + msg+'\n'
+    return return_result
 
+
+# macd策略，macd小于0，且快线从下方与顶点分离，且快线后续上穿慢线，则为多方信号
+# macd大于0，且快线从上方与顶点分离，且快线后续上穿慢线，则为空方信号
+def macdStrategy(macdDataFrame: pd.DataFrame):
+    macdslow = macdDataFrame['macds']
+    macdfast = macdDataFrame['macdf']
+    macd = macdDataFrame['macd']
+
+    if(macd>0):
+        # 判断是否快线上穿了慢线(五天内差值相乘小于等于0)，多方信号
+        if(macd[-5]*macd[-4]<=0 or macd[-4]*macd[-3]<=0 or macd[-3]*macd[-2]<=0 or macd[-2]*macd[-1]<=0):
+            maxOne,maxSeri = findSpecialPoint(macd,-1)
+            if(macdfast[maxSeri]<maxOne):
+                return "macdBuy",True
+    elif(macdslow[-1]>0 and macdfast[-1]>0):
+        # 判断是否快线是否下穿了慢线（五天内差值相乘小于等于0），空方信号
+        if(macd[-5]*macd[-4]<=0 or macd[-4]*macd[-3]<=0 or macd[-3]*macd[-2]<=0 or macd[-2]*macd[-1]<=0):
+            maxOne,maxSeri = findSpecialPoint(macd,1)
+            if(macdfast[maxSeri]>maxOne):
+                return "macdSell",True
+    return "ignore",False
+
+def findSpecialPoint(macd, symbol):
+    maxOne = macd[-1]*symbol
+    maxSeri = -1
+    begseri = -1
+    while(macd[begseri]*symbol<0):
+        begseri-=1
+    endseri = begseri
+    while(macd[endseri]>0):
+        endseri-=1
+    for i in range(endseri,begseri+1):
+        if(macd[i]*symbol>maxOne):
+            maxOne = macd[i]*symbol
+            maxSeri = i
+    return maxOne*symbol,maxSeri
 
 def calculate_kdj(data):
     n = len(data)
