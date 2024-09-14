@@ -248,10 +248,10 @@ def computeDailyStock():
         smaDataFrame = get_ma_frame(kdataFrame)
         macdDataFrame = get_macd_frame(smaDataFrame)
 
-        kArray = macdDataFrame['收盘']
-        k,d,j = calculate_kdj(kArray)
+        # kArray = macdDataFrame['收盘']
+        # k,d,j = calculate_kdj(kArray)
         msg,needAdd = macdStrategy(macdDataFrame)
-        expandMsg = '股票代码：'+stockcode + '，交易建议：' +msg +'|-----|'
+        expandMsg = '股票代码 '+stockcode + '\n交易建议 ' +msg +'\n \n'
         if(needAdd):
             return_result = return_result + expandMsg
         sleep(1)
@@ -273,11 +273,11 @@ def macdStrategy(macdDataFrame: pd.DataFrame):
         # 判断是否快线上穿了慢线(五天内差值相乘小于等于0)，多方信号
             maxOne,maxSeri = findSpecialPoint(macd,-1)
             if(macdfast[maxSeri]<maxOne):
-                return "涨价区间，可考虑买入点",True
+                return "涨价区间",True
         else:
             maxOne,maxSeri = findSpecialPoint(macd,1)
             if(macdfast[maxSeri]>maxOne):
-                return "降价区间，可考虑止盈止损",True
+                return "降价区间",True
 
     return "ignore",False
 
@@ -334,7 +334,7 @@ def send_wechat(msg):
 
     title = end+'股票量化分析'
     content = msg
-    template = 'html'
+    template = 'markdown'
     url = f"https://www.pushplus.plus/send?token={token}&title={title}&content={content}&template={template}"
     print(url)
     r = requests.get(url=url)
