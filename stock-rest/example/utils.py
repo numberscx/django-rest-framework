@@ -261,26 +261,25 @@ def macdStrategy(macdDataFrame: pd.DataFrame):
     macdslow = macdDataFrame['macds']
     macdfast = macdDataFrame['macdf']
     macd = macdDataFrame['macd']
-    print("print macd")
-    print(macd)
-    if(macd[-1]>0):
+    maxlen = len(macd)
+
+    if(macd[maxlen-5]*macd[maxlen-4]<=0 or macd[maxlen-4]*macd[maxlen-3]<=0 or macd[maxlen-3]*macd[maxlen-2]<=0 or macd[maxlen-2]*macd[maxlen-1]<=0):
+        if(macd[maxlen-1]>0):
         # 判断是否快线上穿了慢线(五天内差值相乘小于等于0)，多方信号
-        if(macd[-5]*macd[-4]<=0 or macd[-4]*macd[-3]<=0 or macd[-3]*macd[-2]<=0 or macd[-2]*macd[-1]<=0):
             maxOne,maxSeri = findSpecialPoint(macd,-1)
             if(macdfast[maxSeri]<maxOne):
                 return "macdBuy",True
-    elif(macdslow[-1]>0 and macdfast[-1]>0):
-        # 判断是否快线是否下穿了慢线（五天内差值相乘小于等于0），空方信号
-        if(macd[-5]*macd[-4]<=0 or macd[-4]*macd[-3]<=0 or macd[-3]*macd[-2]<=0 or macd[-2]*macd[-1]<=0):
+        else:
             maxOne,maxSeri = findSpecialPoint(macd,1)
             if(macdfast[maxSeri]>maxOne):
                 return "macdSell",True
+
     return "ignore",False
 
 def findSpecialPoint(macd, symbol):
-    maxOne = macd[-1]*symbol
+    maxOne = 0
     maxSeri = -1
-    begseri = -1
+    begseri = len(macd)-1
     while(macd[begseri]*symbol<=0):
         begseri-=1
     endseri = begseri
