@@ -236,8 +236,10 @@ def computeDailyStock():
 
     allstock = initStock.objects.all()
     return_result = ""
-
+    length = len(allstock)
+    thisSeri = 0
     for stock in allstock:
+        thisSeri = thisSeri + 1
         stockcode = stock.__str__()
         logger.debug("computeDailyStock stock_code = "+stockcode)
         kdataFrame = get_k_history(stockcode)
@@ -255,7 +257,7 @@ def computeDailyStock():
         if(needAdd):
             return_result = return_result + expandMsg
         sleep(1)
-        print(expandMsg)
+        print(expandMsg + ' ' + str(thisSeri) + '/' + str(length))
         logger.debug(expandMsg)
     return return_result
 
