@@ -232,8 +232,8 @@ def computeDailyStock():
     return_result = ""
 
     for stockCode in allstock:
-        logger.debug("computeDailyStock stock_code = "+stockCode)
-        kdataFrame = get_k_history(stockCode)
+        logger.debug("computeDailyStock stock_code = "+stockCode.__str__())
+        kdataFrame = get_k_history(stockCode.__str__())
         smaDataFrame = get_ma_frame(kdataFrame)
         macdDataFrame = get_macd_frame(smaDataFrame)
 
