@@ -93,7 +93,7 @@ def get_k_history(code: str, beg: str = '20230101', end = '10000204', klt: int =
     # 股票名称
     # name = data['name']
     if not data:
-        return None
+        return pd.DataFrame()
     klines = data['klines']
     rows = []
     for _kline in klines:
@@ -239,7 +239,7 @@ def computeDailyStock():
     for stockCode in allstock:
         logger.debug("computeDailyStock stock_code = "+stockCode.__str__())
         kdataFrame = get_k_history(stockCode.__str__())
-        if not kdataFrame:
+        if kdataFrame.empty:
             continue
         smaDataFrame = get_ma_frame(kdataFrame)
         macdDataFrame = get_macd_frame(smaDataFrame)

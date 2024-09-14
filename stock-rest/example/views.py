@@ -20,6 +20,8 @@ def query_simple_stock(request):
     code = request.data.get('code')
     if(code):
         kdataFrame = get_k_history(code)
+        if kdataFrame.empty:
+            return Response(HttpFailure().to_representation())
         smaDataFrame = get_ma_frame(kdataFrame)
         macdDataFrame = get_macd_frame(smaDataFrame)
         computeBuySellDataFrame = compute_buy_and_sell(macdDataFrame)
@@ -78,7 +80,7 @@ def query_chance(request):
 
     for stock in allstock:
         kdataFrame = get_k_history(stock.stock_code, beg=start_str, end=now_str)
-        if not kdataFrame:
+        if kdataFrame.empty:
             continue
         smaDataFrame = get_ma_frame(kdataFrame)
         buyOrSell = compute_buy_and_sell_real(smaDataFrame, userId,stock.stock_code)
