@@ -262,7 +262,7 @@ def macdStrategy(macdDataFrame: pd.DataFrame):
     macdfast = macdDataFrame['macdf']
     macd = macdDataFrame['macd']
 
-    if(macd>0):
+    if(macd[-1]>0):
         # 判断是否快线上穿了慢线(五天内差值相乘小于等于0)，多方信号
         if(macd[-5]*macd[-4]<=0 or macd[-4]*macd[-3]<=0 or macd[-3]*macd[-2]<=0 or macd[-2]*macd[-1]<=0):
             maxOne,maxSeri = findSpecialPoint(macd,-1)
@@ -280,10 +280,10 @@ def findSpecialPoint(macd, symbol):
     maxOne = macd[-1]*symbol
     maxSeri = -1
     begseri = -1
-    while(macd[begseri]*symbol<0):
+    while(macd[begseri]*symbol<=0):
         begseri-=1
     endseri = begseri
-    while(macd[endseri]>0):
+    while(macd[endseri]*symbol>0):
         endseri-=1
     for i in range(endseri,begseri+1):
         if(macd[i]*symbol>maxOne):
