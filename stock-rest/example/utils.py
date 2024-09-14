@@ -221,12 +221,14 @@ def judge_sell(close, open, ma5, ma10, i, markPoint):
                 break
         return hasBuy
     return False
+from django.apps import apps
 
 # 每日根据收盘计算macd处于跌势末尾，jdk快线上穿慢线
 def computeDailyStock():
-    from .schedule import __initSchedule__
-    __initSchedule__()
-    allstock = Stock.objects.all()
+    # 定时任务，需要懒加载模型
+    initStock = apps.get_model('example', 'Stock')  # 获取延迟加载的模型
+
+    allstock = initStock.objects.all()
     return_result = ""
 
     for stockCode in allstock:
