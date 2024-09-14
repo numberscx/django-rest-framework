@@ -246,7 +246,7 @@ def computeDailyStock():
         kArray = macdDataFrame['收盘']
         k,d,j = calculate_kdj(kArray)
         msg,needAdd = macdStrategy(macdDataFrame)
-        expandMsg = '股票代码：'+stockCode.__str__() + '，股票名：' + stockCode.stock_name + '，交易建议：' +msg +'|'
+        expandMsg = '股票代码：'+stockCode.__str__() + '，交易建议：' +msg +'|'
         if(needAdd):
             return_result = return_result + expandMsg
         sleep(1)
