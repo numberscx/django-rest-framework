@@ -106,8 +106,6 @@ def get_k_history(code: str, beg: str = '20230101', end = '10000204', klt: int =
     return df
 
 def get_ma_frame(kdataFrame : pd.DataFrame):
-    if not kdataFrame:
-        return None
     kdata = kdataFrame['收盘']
     print(kdata.size)
     ma_5 = ta.sma(kdata, 5)
