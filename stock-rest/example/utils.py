@@ -235,10 +235,13 @@ def computeDailyStock():
     allstock = initStock.objects.all()
     return_result = ""
 
-    for stockCode in allstock:
-        logger.debug("computeDailyStock stock_code = "+stockCode.__str__())
-        kdataFrame = get_k_history(stockCode.__str__())
+    for stock in allstock:
+        stockcode = stock.__str__()
+        logger.debug("computeDailyStock stock_code = "+stockcode)
+        kdataFrame = get_k_history(stockcode)
         if kdataFrame.empty:
+            print("cant find stock data" + stockcode)
+            logger.debug("cant find stock data" + stockcode)
             continue
         smaDataFrame = get_ma_frame(kdataFrame)
         macdDataFrame = get_macd_frame(smaDataFrame)
@@ -246,7 +249,7 @@ def computeDailyStock():
         kArray = macdDataFrame['收盘']
         k,d,j = calculate_kdj(kArray)
         msg,needAdd = macdStrategy(macdDataFrame)
-        expandMsg = '股票代码：'+stockCode.__str__() + '，交易建议：' +msg +'|'
+        expandMsg = '股票代码：'+stockcode + '，交易建议：' +msg +'|'
         if(needAdd):
             return_result = return_result + expandMsg
         sleep(1)
