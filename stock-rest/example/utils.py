@@ -328,7 +328,11 @@ def calculate_kdj(data):
 
 def send_wechat(msg):
     token = 'de25e20f7de54968b6edd2243ec1441a'#前边复制到那个token
-    title = 'title1'
+    current_time = time.time()
+
+    end = time.strftime("%Y%m%d", time.localtime(current_time))
+
+    title = end+'股票量化分析'
     content = msg
     template = 'html'
     url = f"https://www.pushplus.plus/send?token={token}&title={title}&content={content}&template={template}"
