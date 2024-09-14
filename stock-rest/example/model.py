@@ -35,6 +35,9 @@ class Stock(models.Model):
     def __str__(self):
         return self.stock_code
 
+    def getStockName(self):
+        return self.stock_name
+
     def save(self):
         temp_user_id = self.stock_code
         order_exists = Stock.objects.filter(stock_code=temp_user_id)
