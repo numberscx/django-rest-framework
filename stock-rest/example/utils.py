@@ -250,8 +250,8 @@ def computeDailyStock():
         if(needAdd):
             return_result = return_result + msg+'\n'
         sleep(1)
-        print(msg)
-        logger.debug(msg)
+        print(stockCode.__str__() + msg)
+        logger.debug(stockCode.__str__() + msg)
     return return_result
 
 
