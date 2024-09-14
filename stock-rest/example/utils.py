@@ -136,11 +136,13 @@ def get_macd_frame(kdataFrame: pd.DataFrame):
     fastma = fastma.replace(np.NaN, 0)
 
     macd.fillna(0, inplace=True)
-    slowma = slowma.replace(np.NaN, 0)
-    fastma = fastma.replace(np.NaN, 0)
+    slowma.fillna(0, inplace=True)
+    fastma.fillna(0, inplace=True)
 
-    macdPd = np.array([slowma, fastma, macd])
-    df = pd.DataFrame(macdPd, columns=['macds', 'macdf', 'macd'])
+    rows = []
+    for i in range(0, len(slowma)):
+        rows.append([slowma[i], fastma[i],macd[i]])
+    df = pd.DataFrame(rows, columns=['macds', 'macdf', 'macd'])
 
     return pd.concat([kdataFrame, df], axis=1)
 
