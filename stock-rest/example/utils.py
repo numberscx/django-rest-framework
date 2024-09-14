@@ -123,7 +123,6 @@ def get_ma_frame(kdataFrame : pd.DataFrame):
         rows.append([ma_5[i], ma_10[i], ma_20[i], ma_60[i]])
 
     ma_frame = pd.DataFrame(rows,columns=['ma5','ma10','ma20','ma60'])
-    print(ma_frame)
     ma_frame.fillna(0, inplace=True)
     return pd.concat([kdataFrame, ma_frame], axis=1)
 
