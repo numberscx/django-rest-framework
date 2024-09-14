@@ -157,26 +157,33 @@ def get_list_json_response(data):
     return context
 
 
-def compute_buy_and_sell(kdataFrame: pd.DataFrame):
-    close = kdataFrame['收盘']
-    open = kdataFrame['开盘']
-    ma5 = kdataFrame['ma5']
-    ma10 = kdataFrame['ma10']
+def compute_buy_and_sell(macdDataFrame: pd.DataFrame):
+    macdslow = macdDataFrame['macds']
+    macdfast = macdDataFrame['macdf']
+    macd = macdDataFrame['macd']
+    maxlen = len(macd)
 
-    markPoint = np.zeros((close.size,))
+    markPoint = np.zeros((maxlen,))
+    for i in range(maxlen):
+        if i<30:
+            continue
+        if macd[i]*macd[i+1]<0:
+            if macd[i]>0:
+                # 快线下穿慢线，确定跌周期
+                maxOne,maxSeri,periodLen = findSpecialPoint(macd, 1, i)
+                if(macdfast[maxSeri]>maxOne and periodLen >10):
+                    markPoint[i+1]=-1
+            else:
+                # 慢线上穿快线，确定涨周期
+                maxOne, maxSeri, periodLen = findSpecialPoint(macd, -1, i)
+                if(macdfast[maxSeri]<maxOne and periodLen >10):
+                    markPoint[i+1]=1
 
-    for i in range(close.size):
-        if (i > 22):
-            # 若前五天的开盘、收盘均低于ma5，且当天上穿ma5，则标记为买点
-            if (judge_buy(close, open, ma5, ma10, i)):
-                markPoint[i] = 1
-            elif (judge_sell(close, open, ma5, ma10, i, markPoint)):
-                markPoint[i] = -1
     rows = []
     for i in range(0, markPoint.size):
         rows.append([markPoint[i]])
     mark_point_frame = pd.DataFrame(rows, columns=['buyAndSell'])
-    return pd.concat([kdataFrame, mark_point_frame], axis=1)
+    return pd.concat([macdDataFrame, mark_point_frame], axis=1)
 
 def compute_buy_and_sell_real(kdataFrame: pd.DataFrame,userId,stockCode):
     close = kdataFrame['收盘']
@@ -229,7 +236,7 @@ def judge_sell(close, open, ma5, ma10, i, markPoint):
     return False
 from django.apps import apps
 
-# 每日根据收盘计算macd处于跌势末尾，jdk快线上穿慢线
+# 每日根据收盘计算macd
 def computeDailyStock():
     # 定时任务，需要懒加载模型
     initStock = apps.get_model('example', 'Stock')  # 获取延迟加载的模型
@@ -261,6 +268,35 @@ def computeDailyStock():
         logger.debug(expandMsg)
     return return_result
 
+# 计算单个股票的买卖点
+def macdStrategyForSingle(macdDataFrame: pd.DataFrame):
+    macdslow = macdDataFrame['macds']
+    macdfast = macdDataFrame['macdf']
+    macd = macdDataFrame['macd']
+    maxlen = len(macd)
+
+    markPoint = np.zeros((maxlen,))
+    for i in range(maxlen):
+        if i<30:
+            continue
+        if macd[i]*macd[i+1]<0:
+            if macd[i]>0:
+                # 快线下穿慢线，确定跌周期
+                maxOne,maxSeri,periodLen = findSpecialPoint(macd, 1, i)
+                if(macdfast[maxSeri]>maxOne and periodLen >10):
+                    markPoint[i+1]=-1
+            else:
+                # 慢线上穿快线，确定涨周期
+                maxOne, maxSeri, periodLen = findSpecialPoint(macd, -1, i)
+                if(macdfast[maxSeri]<maxOne and periodLen >10):
+                    markPoint[i+1]=1
+
+
+
+
+
+
+
 
 # macd策略，macd小于0，且快线从下方与顶点分离，且快线后续上穿慢线，则为多方信号
 # macd大于0，且快线从上方与顶点分离，且快线后续上穿慢线，则为空方信号
@@ -273,20 +309,20 @@ def macdStrategy(macdDataFrame: pd.DataFrame):
     if(macd[maxlen-5]*macd[maxlen-4]<=0 or macd[maxlen-4]*macd[maxlen-3]<=0 or macd[maxlen-3]*macd[maxlen-2]<=0 or macd[maxlen-2]*macd[maxlen-1]<=0):
         if(macd[maxlen-1]>0):
         # 判断是否快线上穿了慢线(五天内差值相乘小于等于0)，多方信号
-            maxOne,maxSeri = findSpecialPoint(macd,-1)
-            if(macdfast[maxSeri]<maxOne):
+            maxOne,maxSeri,periodLen = findSpecialPoint(macd,-1,maxlen)
+            if(macdfast[maxSeri]<maxOne and periodLen > 10):
                 return "涨价区间",True
         else:
-            maxOne,maxSeri = findSpecialPoint(macd,1)
-            if(macdfast[maxSeri]>maxOne):
+            maxOne,maxSeri,periodLen = findSpecialPoint(macd,1,maxlen)
+            if(macdfast[maxSeri]>maxOne and periodLen > 10):
                 return "降价区间",True
 
     return "ignore",False
 
-def findSpecialPoint(macd, symbol):
+def findSpecialPoint(macd, symbol, maxlen):
     maxOne = 0
     maxSeri = -1
-    begseri = len(macd)-1
+    begseri = maxlen-1
     while(macd[begseri]*symbol<=0):
         begseri-=1
     endseri = begseri
@@ -296,7 +332,7 @@ def findSpecialPoint(macd, symbol):
         if(macd[i]*symbol>maxOne):
             maxOne = macd[i]*symbol
             maxSeri = i
-    return maxOne*symbol,maxSeri
+    return maxOne*symbol,maxSeri,begseri-endseri
 
 def calculate_kdj(data):
     n = len(data)
