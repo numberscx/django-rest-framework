@@ -224,6 +224,8 @@ def judge_sell(close, open, ma5, ma10, i, markPoint):
 
 # 每日根据收盘计算macd处于跌势末尾，jdk快线上穿慢线
 def computeDailyStock():
+    from .schedule import __initSchedule__
+    __initSchedule__()
     allstock = Stock.objects.all()
     return_result = ""
 
