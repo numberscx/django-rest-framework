@@ -131,21 +131,12 @@ def get_ma_frame(kdataFrame : pd.DataFrame):
 
 def get_macd_frame(kdataFrame: pd.DataFrame):
     kdata = kdataFrame['收盘']
-    fastma,slowma,macd = macdScx(kdata)
+    macd = ta.macd(kdata)
     macd = macd.replace(np.NaN, 0)
-    slowma = slowma.replace(np.NaN, 0)
-    fastma = fastma.replace(np.NaN, 0)
+
 
     macd.fillna(0, inplace=True)
-    slowma.fillna(0, inplace=True)
-    fastma.fillna(0, inplace=True)
-
-    rows = []
-    for i in range(0, len(slowma)):
-        rows.append([slowma[i], fastma[i],macd[i]])
-    df = pd.DataFrame(rows, columns=['macds', 'macdf', 'macd'])
-
-    return pd.concat([kdataFrame, df], axis=1)
+    return pd.concat([kdataFrame, macd], axis=1)
 
 def get_single_json_response(data):
     return data.serialize()

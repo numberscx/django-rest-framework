@@ -24,6 +24,8 @@ def query_simple_stock(request):
             return Response(HttpFailure().to_representation())
         smaDataFrame = get_ma_frame(kdataFrame)
         macdDataFrame = get_macd_frame(smaDataFrame)
+        # todo remove
+        print(macdDataFrame)
         computeBuySellDataFrame = compute_buy_and_sell(macdDataFrame)
         return Response(computeBuySellDataFrame.to_dict())
     else:
