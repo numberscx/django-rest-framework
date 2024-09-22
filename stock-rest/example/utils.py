@@ -271,7 +271,7 @@ def computeDailyStock():
         expandMsg = name +'('+stockcode + ') 交易建议 ' +msg
         if(needAdd):
             return_result = return_result + expandMsg + '\n \n'
-            stock_rows.append([name, stockcode, msg])
+            stock_rows.append([name, str(stockcode), msg])
         sleep(0.5)
         print(expandMsg + ' ' + str(thisSeri) + '/' + str(length) + '\n')
         logger.debug(expandMsg + ' ' + str(thisSeri) + '/' + str(length) + '\n')
