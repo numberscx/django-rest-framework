@@ -93,9 +93,9 @@ def get_k_history(code: str, beg: str = '20230101', end = '10000204', klt: int =
     data = json_response['data']
     # code = data['code']
     # 股票名称
-    # name = data['name']
     if not data:
         return pd.DataFrame()
+    name = data['name']
     klines = data['klines']
     rows = []
     for _kline in klines:
@@ -105,7 +105,7 @@ def get_k_history(code: str, beg: str = '20230101', end = '10000204', klt: int =
     df['收盘'] = df['收盘'].astype(float)
     df['开盘'] = df['开盘'].astype(float)
 
-    return df
+    return df,name
 
 def get_ma_frame(kdataFrame : pd.DataFrame):
     kdata = kdataFrame['收盘']
@@ -240,7 +240,7 @@ def computeDailyStock():
         thisSeri = thisSeri + 1
         stockcode = stock.__str__()
         logger.debug("computeDailyStock stock_code = "+stockcode)
-        kdataFrame = get_k_history(stockcode)
+        kdataFrame,name = get_k_history(stockcode)
         if kdataFrame.empty:
             print("cant find stock data" + stockcode)
             logger.debug("cant find stock data" + stockcode)
@@ -251,12 +251,12 @@ def computeDailyStock():
         # kArray = macdDataFrame['收盘']
         # k,d,j = calculate_kdj(kArray)
         msg,needAdd = macdStrategy(macdDataFrame)
-        expandMsg = '股票代码 '+stockcode + '\n交易建议 ' +msg +'\n \n'
+        expandMsg = name +'('+stockcode + ') 交易建议 ' +msg
         if(needAdd):
-            return_result = return_result + expandMsg
-        sleep(1)
-        print(expandMsg + ' ' + str(thisSeri) + '/' + str(length))
-        logger.debug(expandMsg)
+            return_result = return_result + expandMsg + '\n \n'
+        sleep(0.5)
+        print(expandMsg + ' ' + str(thisSeri) + '/' + str(length) + '\n')
+        logger.debug(expandMsg + ' ' + str(thisSeri) + '/' + str(length) + '\n')
     return return_result
 
 # 计算单个股票的买卖点

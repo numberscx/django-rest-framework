@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 def query_simple_stock(request):
     code = request.data.get('code')
     if(code):
-        kdataFrame = get_k_history(code)
+        kdataFrame,name = get_k_history(code)
         if kdataFrame.empty:
             return Response(HttpFailure().to_representation())
         smaDataFrame = get_ma_frame(kdataFrame)
@@ -81,7 +81,7 @@ def query_chance(request):
     f = open(now_str+"_"+userId+".txt", 'a') # 读取label.txt文件，没有则创建，‘a’表示再次写入时不覆盖之前的内容
 
     for stock in allstock:
-        kdataFrame = get_k_history(stock.stock_code, beg=start_str, end=now_str)
+        kdataFrame,name = get_k_history(stock.stock_code, beg=start_str, end=now_str)
         if kdataFrame.empty:
             continue
         smaDataFrame = get_ma_frame(kdataFrame)

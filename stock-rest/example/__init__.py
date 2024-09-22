@@ -41,3 +41,12 @@
 # if __name__ == '__main__':
 #     msg = 'Life is short I use python'
 #     send_wechat(msg)
+
+# import akshare as ak
+#
+# # 获取股票日线行情数据
+# stock_data = ak.stock_zh_a_daily(symbol="sz000001", start_date="2022-01-01", end_date="2022-12-31")
+# print(stock_data)
+#
+# fund_em_value_df = ak.fund_em_value(symbol="000001")
+# print(fund_em_value_df.head())
