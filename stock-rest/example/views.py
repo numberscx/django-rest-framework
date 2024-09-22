@@ -10,6 +10,7 @@ from .serializer import *
 import baostock as bs
 import time
 from datetime import datetime
+import os
 
 
 logger = logging.getLogger(__name__)
@@ -46,6 +47,20 @@ def find_stock(request):
     return Response(serializers.data)
 
 @api_view(['POST'])
+def findCommandStock(request):
+    date = request.data.get('date')
+    print(date)
+    file_path = date + '.xlsx'
+
+    if not os.path.exists(file_path):
+        return Response(HttpFailure().to_representation())
+    # 使用pandas读取xlsx文件
+    df = pd.read_excel(file_path)
+
+    return Response(df.to_dict())
+
+
+@api_view(['POST'])
 def modified_stock(request):
     userId = request.data.get('userId')
     stock_id = request.data.get('stockId')
@@ -59,7 +74,7 @@ def modified_stock(request):
 
 @api_view(['GET'])
 def queryDailyStock(request):
-    msg = computeDailyStock()
+    msg= computeDailyStock()
     send_wechat(msg)
     logger.debug("dailyStockCompute " + msg)
     return Response({'success': True,

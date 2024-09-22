@@ -9,6 +9,7 @@ import numpy as np
 from .model import *
 import logging
 from .basicTa import macdScx
+import os
 logger = logging.getLogger("util")
 
 
@@ -229,6 +230,20 @@ from django.apps import apps
 
 # 每日根据收盘计算macd
 def computeDailyStock():
+    current_time = time.time()
+    now = time.strftime("%Y%m%d", time.localtime(current_time))
+
+    file_path = now+'.xlsx'
+    if os.path.exists(file_path):
+        df = pd.read_excel(file_path)
+        returnresult = ""
+        stockname = df['stockName']
+        stockcode = df['stockCode']
+        suggest = df['suggest']
+        for i in range(len(stockname)):
+            returnresult = returnresult + stockname[i] + '(' + stockcode[i] + ') 交易建议' + suggest[i] + '\n \n'
+        return returnresult
+
     # 定时任务，需要懒加载模型
     initStock = apps.get_model('example', 'Stock')  # 获取延迟加载的模型
 
@@ -236,6 +251,7 @@ def computeDailyStock():
     return_result = ""
     length = len(allstock)
     thisSeri = 0
+    stock_rows = []
     for stock in allstock:
         thisSeri = thisSeri + 1
         stockcode = stock.__str__()
@@ -254,10 +270,23 @@ def computeDailyStock():
         expandMsg = name +'('+stockcode + ') 交易建议 ' +msg
         if(needAdd):
             return_result = return_result + expandMsg + '\n \n'
+            stock_rows.append([name, stockcode, msg])
         sleep(0.5)
         print(expandMsg + ' ' + str(thisSeri) + '/' + str(length) + '\n')
         logger.debug(expandMsg + ' ' + str(thisSeri) + '/' + str(length) + '\n')
+    stocks = pd.DataFrame(stock_rows,columns=['stockName','stockCode','suggest'])
+
+    with pd.ExcelWriter(file_path) as writer:
+        stocks.to_excel(writer, sheet_name = 'Sheet1', index=False)
+
     return return_result
+
+
+
+
+
+
+
 
 # 计算单个股票的买卖点
 def macdStrategyForSingle(macdDataFrame: pd.DataFrame):

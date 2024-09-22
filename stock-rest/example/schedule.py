@@ -3,12 +3,17 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import logging
 from .utils import computeDailyStock
 from .utils import send_wechat
+import time
+import pandas as pd
+import os
 
 logger = logging.getLogger(__name__)
 
 def computeDailyStockAndSendMsg(**kwargs):
+
     logger.debug(f"定时任务准备执行:{kwargs.get('执行时间', datetime.now())}")
     msg = computeDailyStock()
+
     send_wechat(msg)
     logger.debug(f"定时任务执行了:{kwargs.get('执行时间', datetime.now())}")
 

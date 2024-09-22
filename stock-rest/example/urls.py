@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import query_simple_stock,query_my_stock,find_stock,modified_stock,init_stock,query_chance,queryDailyStock
+from .views import query_simple_stock,query_my_stock,find_stock,modified_stock,init_stock,query_chance,findCommandStock,queryDailyStock
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,5 +31,6 @@ urlpatterns = [
     path('initstock/', init_stock, name='init-stock'),
     path('querychances/', query_chance, name='init-stock'),
     path('queryDailyStock/', queryDailyStock, name='queryDaily-stock'),
+    path('queryCommandStock/', findCommandStock, name='findCommandStock'),
 
 ]
