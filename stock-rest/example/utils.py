@@ -242,7 +242,7 @@ def computeDailyStock():
         stockcode = df['stockCode']
         suggest = df['suggest']
         for i in range(len(stockname)):
-            returnresult = returnresult + stockname[i] + '(' + stockcode[i] + ') 交易建议' + suggest[i] + '\n \n'
+            returnresult = returnresult + stockname[i] + '(' + str(stockcode[i]) + ') 交易建议' + suggest[i] + '\n \n'
         return returnresult
 
     # 定时任务，需要懒加载模型
