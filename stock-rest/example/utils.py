@@ -149,9 +149,9 @@ def get_list_json_response(data):
 
 
 def compute_buy_and_sell(macdDataFrame: pd.DataFrame):
-    macdslow = macdDataFrame['macds']
-    macdfast = macdDataFrame['macdf']
-    macd = macdDataFrame['macd']
+    macdslow = macdDataFrame['MACDs_12_26_9']
+    macdfast = macdDataFrame['MACD_12_26_9']
+    macd = macdDataFrame['MACDh_12_26_9']
     maxlen = len(macd)
 
     markPoint = np.zeros((maxlen,))
@@ -292,9 +292,9 @@ def macdStrategyForSingle(macdDataFrame: pd.DataFrame):
 # macd策略，macd小于0，且快线从下方与顶点分离，且快线后续上穿慢线，则为多方信号
 # macd大于0，且快线从上方与顶点分离，且快线后续上穿慢线，则为空方信号
 def macdStrategy(macdDataFrame: pd.DataFrame):
-    macdslow = macdDataFrame['macds']
-    macdfast = macdDataFrame['macdf']
-    macd = macdDataFrame['macd']
+    macdslow = macdDataFrame['MACDs_12_26_9']
+    macdfast = macdDataFrame['MACD_12_26_9']
+    macd = macdDataFrame['MACDh_12_26_9']
     maxlen = len(macd)
 
     if(macd[maxlen-5]*macd[maxlen-4]<=0 or macd[maxlen-4]*macd[maxlen-3]<=0 or macd[maxlen-3]*macd[maxlen-2]<=0 or macd[maxlen-2]*macd[maxlen-1]<=0):
