@@ -230,8 +230,7 @@ from django.apps import apps
 
 
 def pdGFromxlsx(filePath):
-    df = pd.read_excel(filePath)
-    df = df.astype(str)
+    df = pd.read_excel(filePath, dtype=str)
     return df
 
 # 每日根据收盘计算macd
