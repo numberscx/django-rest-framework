@@ -349,9 +349,8 @@ def findSpecialPoint(macd, symbol, maxlen):
     begseri = maxlen-1
     while(macd[begseri]*symbol<=0):
         begseri-=1
-
-    if begseri<1:
-        return 99999*symbol,1,1
+        if begseri<10:
+            return 99999*symbol,1,1
     endseri = begseri
     while(macd[endseri]*symbol>0):
         endseri-=1
