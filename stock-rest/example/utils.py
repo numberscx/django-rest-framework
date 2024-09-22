@@ -109,7 +109,7 @@ def get_k_history(code: str, beg: str = '20230101', end = '10000204', klt: int =
 
 def get_ma_frame(kdataFrame : pd.DataFrame):
     kdata = kdataFrame['收盘']
-    print(kdata.size)
+    # print(kdata.size)
     ma_5 = ta.sma(kdata, 5)
     ma_10 = ta.sma(kdata, 10)
     ma_20 = ta.sma(kdata, 20)
@@ -365,7 +365,7 @@ def send_wechat(msg):
     content = msg
     template = 'markdown'
     url = f"https://www.pushplus.plus/send?token={token}&title={title}&content={content}&template={template}"
-    print(url)
+    # print(url)
     r = requests.get(url=url)
-    print(r.text)
+    # print(r.text)
 
