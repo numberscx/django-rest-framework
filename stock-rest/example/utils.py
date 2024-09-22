@@ -233,7 +233,6 @@ def computeDailyStock():
     current_time = time.time()
     now = time.strftime("%Y%m%d", time.localtime(current_time))
 
-
     file_path = now+'.xlsx'
     if os.path.exists(file_path):
         df = pd.read_excel(file_path)
