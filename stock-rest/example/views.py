@@ -55,7 +55,7 @@ def findCommandStock(request):
     if not os.path.exists(file_path):
         return Response(HttpFailure().to_representation())
     # 使用pandas读取xlsx文件
-    df = pd.read_excel(file_path)
+    df = pdGFromxlsx(file_path)
 
     return Response(df.to_dict())
 

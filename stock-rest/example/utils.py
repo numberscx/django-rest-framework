@@ -229,6 +229,11 @@ def judge_sell(close, open, ma5, ma10, i, markPoint):
 from django.apps import apps
 
 
+def pdGFromxlsx(filePath):
+    df = pd.read_excel(filePath)
+    df = df.astype(str)
+    return df
+
 # 每日根据收盘计算macd
 def computeDailyStock():
     current_time = time.time()
@@ -236,7 +241,7 @@ def computeDailyStock():
 
     file_path = now+'.xlsx'
     if os.path.exists(file_path):
-        df = pd.read_excel(file_path)
+        df = pdGFromxlsx(file_path)
         returnresult = ""
         stockname = df['stockName']
         stockcode = df['stockCode']
