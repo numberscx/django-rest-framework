@@ -48,9 +48,11 @@ def find_stock(request):
 
 @api_view(['POST'])
 def findCommandStock(request):
-    date = request.data.get('date')
-    print(date)
-    file_path = date + '.xlsx'
+    current_time = time.time()
+    now = time.strftime("%Y%m%d", time.localtime(current_time))
+    # date = request.data.get('date')
+    # print(date)
+    file_path = now + '.xlsx'
 
     if not os.path.exists(file_path):
         return Response(HttpFailure().to_representation())
