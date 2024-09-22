@@ -265,7 +265,6 @@ def computeDailyStock():
         smaDataFrame = get_ma_frame(kdataFrame)
         macdDataFrame = get_macd_frame(smaDataFrame)
 
-        # kArray = macdDataFrame['收盘']
         # k,d,j = calculate_kdj(kArray)
         msg,needAdd = macdStrategy(macdDataFrame)
         expandMsg = name +'('+stockcode + ') 交易建议 ' +msg
