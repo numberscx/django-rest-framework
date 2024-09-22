@@ -228,6 +228,7 @@ def judge_sell(close, open, ma5, ma10, i, markPoint):
     return False
 from django.apps import apps
 
+
 # 每日根据收盘计算macd
 def computeDailyStock():
     current_time = time.time()
