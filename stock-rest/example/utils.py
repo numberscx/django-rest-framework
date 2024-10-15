@@ -1,4 +1,3 @@
-from operator import truediv
 from time import sleep
 from urllib.parse import urlencode
 import pandas as pd
@@ -8,7 +7,6 @@ import pandas_ta as ta
 import numpy as np
 from .model import *
 import logging
-from .basicTa import macdScx
 import os
 logger = logging.getLogger("util")
 
@@ -139,16 +137,6 @@ def get_macd_frame(kdataFrame: pd.DataFrame):
     macd.fillna(0, inplace=True)
     return pd.concat([kdataFrame, macd], axis=1)
 
-def get_single_json_response(data):
-    return data.serialize()
-
-
-def get_list_json_response(data):
-    context = super().get_serializer_context()
-    context['data'] = [item.serialize() for item in data]
-    return context
-
-
 def compute_buy_and_sell(macdDataFrame: pd.DataFrame):
     macdslow = macdDataFrame['MACDs_12_26_9']
     macdfast = macdDataFrame['MACD_12_26_9']
@@ -177,55 +165,7 @@ def compute_buy_and_sell(macdDataFrame: pd.DataFrame):
     mark_point_frame = pd.DataFrame(rows, columns=['buyAndSell'])
     return pd.concat([macdDataFrame, mark_point_frame], axis=1)
 
-def compute_buy_and_sell_real(kdataFrame: pd.DataFrame,userId,stockCode):
-    close = kdataFrame['收盘']
-    open = kdataFrame['开盘']
-    ma5 = kdataFrame['ma5']
-    ma10 = kdataFrame['ma10']
 
-    userStock = UserStocks.objects.filter(user_id=userId).first()
-    print("find userstock",userStock)
-    userHolding = userStock.holding_stocks.split(",")
-    print("userHolding",userHolding)
-    for i in range(close.size):
-        if (i > 22):
-            # 若前五天的开盘、收盘均低于ma5，且当天上穿ma5，则标记为买点
-            if (judge_buy_real(close, open, ma5, ma10)):
-                return 1
-            elif (stockCode in userHolding and judge_sell_real(close, open, ma5, ma10)):
-                return -1
-
-def judge_buy_real(close, open, ma5, ma10):
-    # 连续5天的开盘或者收盘均低于10日均线，再涨15%就突破十日均线
-    if (ma10[-1] > max(close[-5:]) and ma10[-1] > max(open[-5:]) and close[-1]>open[-1] and (ma10[-1]-close[-1])/close[-1] <0.1):
-        return True
-    return False
-
-
-def judge_sell_real(close, open, ma5, ma10):
-    if(close[-1]<ma5):
-        return True
-    return False
-
-
-# 若前3天的收盘均低于ma10，且当天上穿ma10，并且已经涨了两天了
-def judge_buy(close, open, ma5, ma10, i):
-    if(ma10[i-1]>max(close[i-3:i]) and close[i]>ma10[i] and close[i-2]>=open[i-2] and close[i-1]>=open[i-1]):
-        return True
-    return False
-
-# 若前3天收盘均高于ma5，且当天下穿ma5，且上一个点为买点
-def judge_sell(close, open, ma5, ma10, i, markPoint):
-    if(ma5[i]<min(close[i-3:i]) and close[i] < open[i] and close[i]<ma5[i]):
-        hasBuy = False
-        for j in range(1,i):
-            if(markPoint[i-j] == -1):
-                break;
-            elif(markPoint[i-j] == 1):
-                hasBuy = True
-                break
-        return hasBuy
-    return False
 from django.apps import apps
 
 
@@ -285,13 +225,6 @@ def computeDailyStock():
 
     return return_result
 
-
-
-
-
-
-
-
 # 计算单个股票的买卖点
 def macdStrategyForSingle(macdDataFrame: pd.DataFrame):
     macdslow = macdDataFrame['macds']
@@ -314,12 +247,6 @@ def macdStrategyForSingle(macdDataFrame: pd.DataFrame):
                 maxOne, maxSeri, periodLen = findSpecialPoint(macd, -1, i)
                 if(macdfast[maxSeri]<maxOne and periodLen >10):
                     markPoint[i+1]=1
-
-
-
-
-
-
 
 
 # macd策略，macd小于0，且快线从下方与顶点分离，且快线后续上穿慢线，则为多方信号
@@ -403,4 +330,20 @@ def send_wechat(msg):
     # print(url)
     r = requests.get(url=url)
     # print(r.text)
+
+all_file_path = "allStocks.xlsx"
+def saveAllStock():
+    # 定时任务，需要懒加载模型
+    initStock = apps.get_model('example', 'Stock')  # 获取延迟加载的模型
+
+    allstock = initStock.objects.all()
+    return_result = ""
+    length = len(allstock)
+    thisSeri = 0
+    stock_rows = []
+    for stock in allstock:
+        stock_rows.append([stock.stock_code, stock.stock_name])
+    stockPd = pd.DataFrame(stock_rows, columns=['stock_code', 'stock_name'])
+    with pd.ExcelWriter(all_file_path) as writer:
+        stockPd.to_excel(writer, sheet_name = 'Sheet1', index=False)
 

@@ -84,38 +84,6 @@ def queryDailyStock(request):
 
 
 @api_view(['POST'])
-def query_chance(request):
-    userId = request.data.get('userId')
-    if userId!="scx":
-        return Response(HttpFailure().to_representation())
-    allstock = Stock.objects.all()
-
-    now = datetime.now()
-    now_str = now.strftime("%Y%m%d")
-
-    six_months_ago = now - datetime.timedelta(days=180)
-    start_str = six_months_ago.strftime("%Y%m%d")
-    f = open(now_str+"_"+userId+".txt", 'a') # 读取label.txt文件，没有则创建，‘a’表示再次写入时不覆盖之前的内容
-
-    for stock in allstock:
-        kdataFrame,name = get_k_history(stock.stock_code, beg=start_str, end=now_str)
-        if kdataFrame.empty:
-            continue
-        smaDataFrame = get_ma_frame(kdataFrame)
-        buyOrSell = compute_buy_and_sell_real(smaDataFrame, userId,stock.stock_code)
-        if buyOrSell == 1:
-            f.write("time to buy "+stock.stock_code)
-            f.write('\n')
-            f.close()
-        elif buyOrSell == -1:
-            f.write("time to sell " + stock.stock_code)
-            f.write('\n')
-            f.close()
-        time.sleep(1)
-
-
-
-@api_view(['POST'])
 def init_stock(request):
     # 登陆系统
     lg = bs.login()
