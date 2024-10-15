@@ -20,9 +20,7 @@ def testSchedule(**kwargs):
 def __initSchedule__():
     scheduler = BackgroundScheduler()
     scheduler.add_job(computeDailyStockAndSendMsg, 'cron', **{"hour": "8"})
-    scheduler.add_job(testSchedule, 'cron', **{"second": "0"})
+    # scheduler.add_job(testSchedule, 'cron', **{"second": "0"})
 
     logger.debug("定时任务开始")
     scheduler.start()
-
-# __initSchedule__()
