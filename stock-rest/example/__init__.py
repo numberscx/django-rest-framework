@@ -50,5 +50,5 @@
 #
 # fund_em_value_df = ak.fund_em_value(symbol="000001")
 # print(fund_em_value_df.head())
-from schedule import __initSchedule__
+from .schedule import __initSchedule__
 __initSchedule__()
