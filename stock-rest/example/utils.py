@@ -5,7 +5,6 @@ import requests
 import time
 import pandas_ta as ta
 import numpy as np
-from .model import *
 import logging
 import os
 logger = logging.getLogger("util")
