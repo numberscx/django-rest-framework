@@ -24,5 +24,3 @@ def __initSchedule__():
 
     logger.debug("定时任务开始")
     scheduler.start()
-
-__initSchedule__()
