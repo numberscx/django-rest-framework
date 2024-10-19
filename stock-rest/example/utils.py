@@ -327,7 +327,7 @@ def send_wechat(msg):
     template = 'markdown'
     url = f"https://www.pushplus.plus/send?token={token}&title={title}&content={content}&template={template}"
     print(url)
-    r = requests.get(url=url)
+    r = requests.post(url=url,data={'content':msg, 'title': end+'股票量化分析','template':'markdown',})
     print(r.text)
 
 all_file_path = "allStocks.xlsx"
