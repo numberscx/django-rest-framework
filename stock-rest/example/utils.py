@@ -326,7 +326,7 @@ def send_wechat(msg):
     content = msg
     template = 'markdown'
     url = f"https://www.pushplus.plus/send?token={token}&title={title}&content={content}&template={template}"
-    # print(url)
+    print(url)
     r = requests.get(url=url)
     print(r.text)
 
