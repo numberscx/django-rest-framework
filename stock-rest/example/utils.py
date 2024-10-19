@@ -328,7 +328,7 @@ def send_wechat(msg):
     url = f"https://www.pushplus.plus/send?token={token}&title={title}&content={content}&template={template}"
     # print(url)
     r = requests.get(url=url)
-    # print(r.text)
+    print(r.text)
 
 all_file_path = "allStocks.xlsx"
 def saveAllStock():
