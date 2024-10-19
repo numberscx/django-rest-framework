@@ -323,11 +323,10 @@ def send_wechat(msg):
     end = time.strftime("%Y%m%d", time.localtime(current_time))
 
     title = end+'股票量化分析'
-    content = msg
     template = 'markdown'
-    url = f"https://www.pushplus.plus/send?token={token}&title={title}&content={content}&template={template}"
+    url = f"https://www.pushplus.plus/send"
     print(url)
-    r = requests.post(url=url,data={'content':msg, 'title': end+'股票量化分析','template':'markdown',})
+    r = requests.post(url=url,data={'token':token,'content':msg, 'title': title,'template':template})
     print(r.text)
 
 all_file_path = "allStocks.xlsx"
